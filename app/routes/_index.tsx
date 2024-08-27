@@ -10,7 +10,23 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <div className="font-sans p-4">
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      {/* title */}
+      <h1 className="text-2xl text-center font-bold">Calculate Your Recurring Passive Income</h1>
+      <div className="grid grid-cols-2 gap-4">
+        {/* Column 1 */}
+        <div className="bg-gray-200 p-4">
+          <p>Add in your expected referrals to see how much you could earn as a Sunvoy Affiliate in just 1 year</p>
+
+          <section>
+            
+
+          </section>
+        </div>
+
+        {/* Column 2 */}
+        <div className="bg-gray-200 p-4">Column 2</div>
+      </div>
+      {/* description */}
     </div>
   );
 }
