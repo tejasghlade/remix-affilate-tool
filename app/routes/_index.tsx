@@ -1,18 +1,17 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, type MetaFunction } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
-  CartesianGrid,
-  Legend,
-  Tooltip,
   XAxis,
   YAxis,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
 import Text from "~/components/Text";
-// import { Slider } from "~/components/ui/slider";
+import { getCalculations } from "~/data/calculations";
+
 import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
@@ -22,10 +21,17 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export function showMoney(amount: number) {
+  return `$${amount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
 export default function Index() {
-  let initialReferredCustomers = 1;
-  let initialNewProjects = 5;
-  let initialExistingProjects = 0;
+  const initialReferredCustomers = 1;
+  const initialNewProjects = 5;
+  const initialExistingProjects = 0;
   const [referredCustomers, setReferredCustomers] = useState(
     initialReferredCustomers
   );
@@ -36,36 +42,81 @@ export default function Index() {
   const [totalRevenue, setTotalRevenue] = useState<number[]>([]);
   const [affiliatePayout, setAffiliatePayout] = useState<number[]>([]);
 
-  let monthlyChurnRate = 0.02; // 2% churn rate
-  let referralPayoutRate = 0.2; // 20% referral payout
-
   useEffect(() => {
-    calculateRevenueAndPayout();
-  }, [referredCustomers, newProjects, existingProjects, monthlyChurnRate]);
+    // send a request to the server to get the
+    fetchCalculation();
+  }, [referredCustomers, newProjects, existingProjects]);
 
-  const calculateRevenueAndPayout = () => {
-    const revenue: number[] = [];
-    const payout: number[] = [];
-    let cumulativeCustomers = referredCustomers;
-
-    for (let month = 0; month < 12; month++) {
-      const monthRevenue =
-        (newProjects * 95 + existingProjects * 0.25) * cumulativeCustomers;
-      revenue.push(monthRevenue);
-
-      const monthPayout = monthRevenue * referralPayoutRate;
-      payout.push(monthPayout);
-
-      // Update cumulativeCustomers for the next month
-      cumulativeCustomers =
-        cumulativeCustomers +
-        referredCustomers -
-        cumulativeCustomers * monthlyChurnRate;
-    }
-
-    setTotalRevenue(revenue);
-    setAffiliatePayout(payout);
+  const fetchCalculation = async () => {
+    const response = await fetch(
+      `/api/calculations?referredCustomers=${referredCustomers}&newProjects=${newProjects}&existingProjects=${existingProjects}`
+    );
+  
+    const data = await response.json(); // Parse the response body as JSON
+  
+    console.log(data); // Log the parsed data
+    setTotalRevenue(data.revenue);
+    setAffiliatePayout(data.payout);
   };
+
+  // const calculateRevenueAndPayout = () => {
+  //   const revenue: number[] = [];
+  //   const payout: number[] = [];
+  //   let cumulativeCustomers = referredCustomers;
+
+  //   for (let month = 0; month < 12; month++) {
+  //     const monthRevenue =
+  //       (newProjects * 95 + existingProjects * 0.25) * cumulativeCustomers;
+  //     revenue.push(monthRevenue);
+
+  //     const monthPayout = monthRevenue * referralPayoutRate;
+  //     payout.push(monthPayout);
+
+  //     // Update cumulativeCustomers for the next month
+  //     cumulativeCustomers =
+  //       cumulativeCustomers +
+  //       referredCustomers -
+  //       cumulativeCustomers * monthlyChurnRate;
+  //   }
+
+  //   setTotalRevenue(revenue);
+  //   setAffiliatePayout(payout);
+  // };
+
+  const generateMonthNames = () => {
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    const startMonthIndex = 7; // August (0-based index)
+    const startYear = 2024;
+
+    const months = [];
+    for (let i = 0; i < 13; i++) { // 13 months to include August 2025
+      const monthIndex = (startMonthIndex + i) % 12;
+      const year = startYear + Math.floor((startMonthIndex + i) / 12);
+      const monthName = monthNames[monthIndex];
+      if (i === 0 || monthIndex === 0) { // Current month or January
+        months.push(`${monthName} ${"  "} ${year}`);
+      } else {
+        months.push(monthName);
+      }
+    }
+    return months;
+  };
+
+  console.log(generateMonthNames())
+
+  const monthNames = generateMonthNames();
+
+  const graphData = 
+ totalRevenue.map((rev, index) => ({
+        name: monthNames[index],
+        revenue: rev,
+        payout: affiliatePayout[index],
+      }));
+
+  console.log(graphData)
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -173,7 +224,10 @@ export default function Index() {
             after 1 year:
           </Text>
           <Text size="xhuge">
-            {totalRevenue.reduce((a, b) => a + b, 0).toLocaleString("en-US")}
+            {showMoney(
+              totalRevenue.reduce((a, b) => a + b, 0) -
+                affiliatePayout.reduce((a, b) => a + b, 0)
+            )}
           </Text>
         </section>
 
@@ -184,7 +238,7 @@ export default function Index() {
             padding: "0 20px",
           }}
         >
-          {/* <div className="text-center">
+          <div className="text-center">
             <Text size="md" lineBreak>
               Your monthly income after 1 year:
             </Text>
@@ -192,12 +246,13 @@ export default function Index() {
               (a, b) => a + b,
               0
             )}, Payout: ${affiliatePayout.reduce((a, b) => a + b, 0)}`}</Text>
-          </div> */}
+          </div>
+
           {/* Chart */}
           <ResponsiveContainer width="100%" height={500}>
             <BarChart
               data={totalRevenue.map((rev, index) => ({
-                name: `Month ${index + 1}`,
+                name: monthNames[index],
                 revenue: rev,
                 payout: affiliatePayout[index],
               }))}
@@ -210,7 +265,7 @@ export default function Index() {
             >
               {/* <CartesianGrid strokeDasharray="3 3" /> */}
               <XAxis dataKey="name" axisLine={false} />
-              <YAxis hide />
+              {/* <YAxis  /> */}
               {/* <Tooltip /> */}
               {/* <Legend  /> */}
               <Bar dataKey="revenue" fill="#cfd6df">
@@ -221,6 +276,7 @@ export default function Index() {
                     className="bar-cell"
                   />
                 ))}
+                 <LabelList dataKey="revenue"  position="top" />
               </Bar>
               {/* <Bar dataKey="revenue" fill="#b0cc53" /> */}
               {/* <Bar dataKey="payout" fill="#82ca9d" /> */}
@@ -231,11 +287,16 @@ export default function Index() {
               fill: #b0cc53 !important;
               background: transparent;
             }
+              .recharts-cartesian-axis-tick-line {
+              display: none;}
           `}</style>
         </section>
       </main>
       {/* small label */}
-      <Text size="md" className=" font-normal block m-2 text-center text-subtitle">
+      <Text
+        size="md"
+        className=" font-normal block m-2 text-center text-subtitle"
+      >
         Calculatios are based on the number of customers you refer each month
         and their avg. project volume.
         <br />
@@ -245,3 +306,5 @@ export default function Index() {
     </div>
   );
 }
+
+
