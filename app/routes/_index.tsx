@@ -1,6 +1,6 @@
 import { type MetaFunction } from "@remix-run/node";
 import { useCallback, useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon from the appropriate package
+import { IoInformationCircle } from "react-icons/io5";
 import debounce from "lodash/debounce";
 import BarCharts from "~/components/charts/BarCharts";
 import InputSlider from "~/components/inputs/InputSlider";
@@ -107,10 +107,10 @@ export default function Index() {
             {/* First slider */}
             <div className="w-full">
               <div className="flex justify-between items-center">
-                <Text className="text-subtitle" size="md" lineBreak>
+                <Text className="text-subtitle font-semibold" size="md" lineBreak>
                   Referred Customer per month
                 </Text>
-                <Text className="text-subtitle">{referredCustomers}</Text>
+                <Text className="text-subtitle font-semibold">{referredCustomers}</Text>
               </div>
               <div className="py-3">
                 <InputSlider
@@ -124,10 +124,10 @@ export default function Index() {
             {/* Second slider */}
             <div className="w-full">
               <div className="flex justify-between items-center">
-                <Text className="text-subtitle" size="md" lineBreak>
-                  Avg. new projects per month
+                <Text className="text-subtitle font-semibold flex justify-center items-center gap-1" size="md" lineBreak>
+                  Avg. new projects per month <IoInformationCircle size='1.3em' />
                 </Text>
-                <Text className="text-subtitle">{newProjects}</Text>
+                <Text className="text-subtitle font-semibold">{newProjects}</Text>
               </div>
               <div className="py-3">
                 <InputSlider
@@ -135,16 +135,17 @@ export default function Index() {
                   max={50}
                   value={newProjects}
                   setValue={setNewProjects}
+                  
                 />
               </div>
             </div>
             {/* Third slider */}
             <div className="w-full">
               <div className="flex justify-between items-center">
-                <Text className="text-subtitle" size="md" lineBreak>
-                  Avg. existing projects
+                <Text className="text-subtitle font-semibold flex justify-center items-center gap-1" size="md" lineBreak>
+                  Avg. existing projects <IoInformationCircle size='1.3em' />
                 </Text>
-                <Text className="text-subtitle">{existingProjects}</Text>
+                <Text className="text-subtitle font-semibold">{existingProjects}</Text>
               </div>
               <div className="py-3">
                 <InputSlider

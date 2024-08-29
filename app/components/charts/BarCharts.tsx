@@ -8,7 +8,6 @@ import {
 } from "recharts";
 import { showMoney } from "../utils/showMoney";
 
-import styles from "./BarCharts.css";
 
 const BarCharts = ({
   totalRevenue,
@@ -39,7 +38,7 @@ const BarCharts = ({
         style={{ fontFamily: "Arial, sans-serif" }}
       >
         {year ? (
-          <>
+           <g transform={`translate(${x},${y})`}>
             {month}
             {/* add spece */}
             {/* <tspan height={1} x={x} dx={5} dy={15} fill="#999999" > </tspan> */}
@@ -47,15 +46,21 @@ const BarCharts = ({
             <tspan
               style={{
                 marginTop: "3px",
+                fontSize: "13px",
+                // rotate 
+                transform: "rotate(90deg)",
+                transformOrigin: "center",
+
               }}
               x={x}
               dx={2}
               dy={18}
               fill="#999999"
+              transform="translate(100,100) rotate(90)"
             >
               {year}
             </tspan>
-          </>
+            </g>
         ) : (
           payload.value
         )}
@@ -93,7 +98,7 @@ const BarCharts = ({
                 />
               }
             />
-            {/* <YAxis  /> */}
+           
             {/* <Tooltip /> */}
             {/* <Legend  /> */}
             <Bar dataKey="revenue" fill="#cfd6df">
@@ -107,6 +112,7 @@ const BarCharts = ({
                 />
               ))}
               <LabelList
+                
                 dataKey="revenue"
                 position="top"
                 color="#cfd6df"

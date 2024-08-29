@@ -50,11 +50,11 @@ const sizes = {
     huge: {
         fontSize: 46,
         lineHeight: 54 / 46,
-        '@media (max-width: 768px)': {
+        '@media (maxWidth: 768px)': {
             fontSize: '2.5rem', // 40px
             lineHeight: '3rem', // 48px
           },
-          '@media (max-width: 480px)': {
+          '@media (maxWidth: 480px)': {
             fontSize: '2rem', // 32px
             lineHeight: '2.5rem', // 40px
           },
@@ -62,11 +62,11 @@ const sizes = {
     xhuge: {
         fontSize: 56,
         lineHeight: 64 / 56,
-        '@media (max-width: 768px)': {
+        '@media (maxWidth: 768px)': {
         fontSize: '3rem', // 48px
         lineHeight: '3.5rem', // 56px
       },
-      '@media (max-width: 480px)': {
+      '@media (maxWidth: 480px)': {
         fontSize: '2.5rem', // 40px
         lineHeight: '3rem', // 48px
       },
@@ -74,11 +74,11 @@ const sizes = {
     xxhuge: {
         fontSize: 68,
         lineHeight: 76 / 68,
-        '@media (max-width: 768px)': {
+        '@media (maxWidth: 768px)': {
             fontSize: '3.75rem', // 60px
             lineHeight: '4.25rem', // 68px
           },
-          '@media (max-width: 480px)': {
+          '@media (maxWidth: 480px)': {
             fontSize: '3rem', // 48px
             lineHeight: '3.5rem', // 56px
           },
