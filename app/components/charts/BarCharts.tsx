@@ -10,13 +10,14 @@ import { showMoney } from "../utils/showMoney";
 
 
 const BarCharts = ({
-  totalRevenue,
   affiliatePayout,
   monthNames,
+  netIncome,
 }: {
   totalRevenue: number[];
   affiliatePayout: number[];
   monthNames: string[];
+  netIncome: number[];
 }) => {
   const CustomXAxisTick = ({
     x,
@@ -38,29 +39,29 @@ const BarCharts = ({
         style={{ fontFamily: "Arial, sans-serif" }}
       >
         {year ? (
-           <g transform={`translate(${x},${y})`}>
+           <>
             {month}
             {/* add spece */}
             {/* <tspan height={1} x={x} dx={5} dy={15} fill="#999999" > </tspan> */}
             {/* add year */}
             <tspan
-              style={{
-                marginTop: "3px",
-                fontSize: "13px",
-                // rotate 
-                transform: "rotate(90deg)",
-                transformOrigin: "center",
+              // style={{
+              //   marginTop: "3px",
+              //   fontSize: "13px",
+              //   // rotate 
+              //   transform: "rotate(90deg)",
+              //   transformOrigin: "center",
 
-              }}
+              // }}
               x={x}
               dx={2}
               dy={18}
               fill="#999999"
-              transform="translate(100,100) rotate(90)"
+              // transform="translate(100,100) rotate(90)"
             >
               {year}
             </tspan>
-            </g>
+            </>
         ) : (
           payload.value
         )}
@@ -73,9 +74,9 @@ const BarCharts = ({
       <section className="bar-chart">
         <ResponsiveContainer width="100%" height={530}>
           <BarChart
-            data={totalRevenue.map((rev, index) => ({
+            data={netIncome.map((income, index) => ({
               name: monthNames[index],
-              revenue: rev,
+              revenue: income,
               payout: affiliatePayout[index],
             }))}
             margin={{
@@ -102,11 +103,11 @@ const BarCharts = ({
             {/* <Tooltip /> */}
             {/* <Legend  /> */}
             <Bar dataKey="revenue" fill="#cfd6df">
-              {totalRevenue.map((entry, index) => (
+              {netIncome.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={
-                    index === totalRevenue.length - 1 ? "#b0cc53" : "#cfd6df"
+                    index === netIncome.length - 1 ? "#b0cc53" : "#cfd6df"
                   }
                   className="bar-cell"
                 />

@@ -37,6 +37,7 @@ export const loader = async ({ request }: { request: Request }) => {
 
     const revenue: number[] = [];
     const payout: number[] = [];
+    const netIncome: number[] = [];
     let cumulativeCustomers = referredCustomers;
 
     for (let month = 0; month < 13; month++) {
@@ -46,6 +47,10 @@ export const loader = async ({ request }: { request: Request }) => {
 
         const monthPayout = monthRevenue * referralPayoutRate;
         payout.push(Math.round(monthPayout)); // Round payout to nearest integer
+
+        // Calculate net income for the month
+        const monthNetIncome = Math.round(monthRevenue - monthPayout);
+        netIncome.push(monthNetIncome);
 
         // Update cumulativeCustomers for the next month
         cumulativeCustomers =
@@ -69,5 +74,5 @@ export const loader = async ({ request }: { request: Request }) => {
      // Introduce a 3-second delay before sending the response
      await new Promise(resolve => setTimeout(resolve, 1000));
 
-    return json({ revenue, payout , monthlyIncomeAfter1Year, months ,totalRevenue , totalPayout });
+    return json({ revenue, payout , netIncome , monthlyIncomeAfter1Year, months ,totalRevenue , totalPayout });
 }

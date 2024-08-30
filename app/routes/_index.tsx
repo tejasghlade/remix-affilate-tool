@@ -13,7 +13,7 @@ import { LoadingIcon } from "~/components/LoadingIcon";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
+    { title: "Affilate Tool" },
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
@@ -51,6 +51,7 @@ export default function Index() {
             `/api/calculations?referredCustomers=${referredCustomers}&newProjects=${newProjects}&existingProjects=${existingProjects}`
           );
           const data: CalculationData = await response.json();
+          console.log("Data fetched:", data);
           setData(data);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -175,6 +176,7 @@ export default function Index() {
             {/* Chart */}
             <BarCharts
               totalRevenue={data?.revenue || []}
+              netIncome={data?.netIncome || []}
               affiliatePayout={data?.payout || []}
               monthNames={data?.months || []}
             />
